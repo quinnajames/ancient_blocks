@@ -1,9 +1,8 @@
-//FILE: main.cpp
-//PROG: Quinn James
-//PURP: Loading, unloading, and main game loop
+//Filename: main.cpp
+//Author: Quinn James
+//Description: Loading, unloading, and main game loop
 
 // CAVE OF ANCIENT BLOCKS
-// FINAL PROJECT
 
 // Graphics credits:
 // Player sprite: "Planet Cute" art by Daniel Cook (Lostgarden.com), released under CC Attribution 3.0
@@ -12,15 +11,6 @@
 // Music credits:
 // "Hydrogen" by Quinn James
 
-// Game status!
-// What's been added, fixed or improved since the demo:
-// 1. Use of separate FG layer for exit sign, so it appears as an overlay on the map rather than floating over an (0,0,0) abyss
-// 2. Better collision detection between sprite and walls/water, so player doesn't "bounce" against walls but just can't go that way
-// 3. Fixed map vertical scrolling (becomes an issue with an expanded map)
-// 4. Expanded the puzzle and map!
-// 5. Added music!
-
-// Enjoy!
 
 
 #include <stdio.h>
@@ -45,6 +35,7 @@
 bool keys[] = { false, false, false, false };
 
 // these functions are most easily implemented in main as they involve different object instances interacting
+// ==POTENTIAL ISSUE -- check whether this can be moved
 bool spriteCoordCollide(Player*, Block*);
 bool blockCoordCollide(Block*, Block*);
 
@@ -54,8 +45,9 @@ int main(void)
 	char mapFilename[] = "Map2-multilayer4.FMP";
 
 	int collided(int, int);
-	bool win = false; // Did we win!!!???
+	bool win = false;
 	bool redrawRequired = true;
+	// ==POTENTIAL ISSUE -- the meaning of this variable is opaque
 	short int user3 = 0;	//Value returned from checkCollision function
 	int mapxoff, mapyoff;
 	bool done = false;
@@ -67,7 +59,9 @@ int main(void)
 	ALLEGRO_TIMER *timer;
 
 	ALLEGRO_SAMPLE *electricSound = NULL;
-	ALLEGRO_SAMPLE_ID elSoundID;				//Don't declare as a pointer!
+
+	// sample ID is not declared as a pointer
+	ALLEGRO_SAMPLE_ID elSoundID;
 	
 	//program init
 	if (!al_init())										//initialize Allegro
@@ -78,6 +72,7 @@ int main(void)
 
 
 	//Install sound "equipment"!
+	// ==POTENTIAL ISSUE -- Opaque error codes
 	if (!al_install_audio()) return -9;
 	if (!al_init_acodec_addon()) return -9;
 	//Reserve one voice.  You need as many of these as you have
@@ -121,12 +116,13 @@ int main(void)
 	// initialize player sprite
 	Player *player1 = new Player;
 	// initialize blocks
-	// Difference from demo: The size of blockArray is now defined in playerdefs.h.
+	// The size of blockArray is now defined in playerdefs.h.
 	// This makes it much easier to add new blocks because now all of the for loops that need to iterate over all
 	// the blocks (for drawing and collision detection) refer to BLOCK_NUM, not a fixed integer.
 	Block *blockArray[BLOCK_NUM];
-	// there HAS to be a more succinct way to do this. maybe like a block add function
-	// LIST OF BLOCKS can c++ do that I hope so
+	// ==POTENTIAL ISSUE - This looks ridiculous. Oh god this looks ridiculous.
+	// std::list might help. Or some kind of operator overloading.
+
 	blockArray[0] = new Block(8, 5);
 	blockArray[1] = new Block(9, 5);
 	blockArray[2] = new Block(9, 6); 
@@ -173,12 +169,8 @@ int main(void)
 
 	
 
-
-
-	//Three variables to illustrate sound parameters
-	//gain:  essentially the volume.  1.0 means normal volume for the recorded sound
-	//pan:  left/right stereo location.  -1.0 is full left, 0.0 center, +1.0 right
-	//speed: frequency of the sound.  1.0 is normal
+	// These are basically standard sound parameters. Gain is volume; gain and speed have 1 as normal.
+	// Pan is -1 to 1, 0 is normal.
 	float gain = 1.0, pan = 0.0, speed = 1.0;
 	al_play_sample(electricSound, gain, pan, speed, ALLEGRO_PLAYMODE_LOOP, &elSoundID);
 
@@ -242,7 +234,8 @@ int main(void)
 			case ALLEGRO_EVENT_TIMER:
 
 			// BEGIN TIMER CASE
-
+			// ==POTENTIAL ISSUE -- case numbers are opaque. Replace with something readable.
+			// Another enum could work.
 				// Try to move player
 				player1->updatePlayer();
 				// Check collision with background map
@@ -262,7 +255,7 @@ int main(void)
 					}//END SWITCH
 				}//endif
 
-				// Check collision with blocks -- this is the most important collision in the game!!
+				// Check collision with blocks -- this is the most important collision in the game
 				int l = -1;
 				for (int k = 0; k < BLOCK_NUM; k++)
 				{
@@ -275,7 +268,7 @@ int main(void)
 					} //endif
 				} //endfor
 
-				// Check collision between blocks and background map (no case 3, a block can't win the game!!)
+				// Check collision between blocks and background map (no case 3, a block can't win the game)
 				if (l >= 0)
 				{
 
@@ -284,7 +277,7 @@ int main(void)
 						switch (user3)
 						{
 							//Case 2:	Block can't pass. Reset to prev position.
-							//Other cases to be added later
+
 						case 2:
 
 							blockArray[l]->resetPosition(); // resests coords and x/y
@@ -338,6 +331,8 @@ int main(void)
 			
 			for (int k = 0; k < BLOCK_NUM; k++)
 				blockArray[k]->drawBlock(mapxoff, mapyoff);
+
+			// ==POTENTIAL ISSUE -- debug code in comments instead of debug functions.
 
 			// This text can be uncommented if we need more info to debug movement.
 			//al_draw_textf(arial18, al_map_rgb(255, 255, 255), 500, 100, ALLEGRO_ALIGN_RIGHT, "Facing (%c) Movecounter (%i)", player1->getFacing(), player1->getCounter());
