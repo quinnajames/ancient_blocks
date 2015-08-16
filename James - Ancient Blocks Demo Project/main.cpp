@@ -14,6 +14,7 @@
 
 
 #include <stdio.h>
+#include <list>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_font.h>
@@ -38,6 +39,7 @@ bool keys[] = { false, false, false, false };
 // ==POTENTIAL ISSUE -- check whether this can be moved
 bool spriteCoordCollide(Player*, Block*);
 bool blockCoordCollide(Block*, Block*);
+void debugPlayerMovement(ALLEGRO_FONT*, Player*);
 
 
 int main(void)
@@ -66,7 +68,7 @@ int main(void)
 	//program init
 	if (!al_init())										//initialize Allegro
 	{
-		fprintf(stderr, "Failed to init allegro!\n");
+		fprintf(stderr, "Failed to initialize allegro!\n");
 		return -1;
 	}
 
@@ -91,21 +93,21 @@ int main(void)
 	//Initialize keyboard input
 	if (!al_install_keyboard())
 	{
-		fprintf(stderr, "Failed to init keyboard!\n");
+		fprintf(stderr, "Failed to initialize keyboard!\n");
 		return -1;
 	}
 	//Initialize timer
 	timer = al_create_timer(1.0 / FPS);
 	if (!timer)
 	{
-		fprintf(stderr, "Failed to init timer!\n");
+		fprintf(stderr, "Failed to initialize timer!\n");
 		return -1;
 	}
 	//Initialize display
 	display = al_create_display(WIDTH, HEIGHT);
 	if (!display)
 	{
-		fprintf(stderr, "Failed to init display!\n");
+		fprintf(stderr, "Failed to initialize display!\n");
 		al_destroy_timer(timer);
 		return -1;
 	}
@@ -119,10 +121,15 @@ int main(void)
 	// The size of blockArray is now defined in playerdefs.h.
 	// This makes it much easier to add new blocks because now all of the for loops that need to iterate over all
 	// the blocks (for drawing and collision detection) refer to BLOCK_NUM, not a fixed integer.
-	Block *blockArray[BLOCK_NUM];
+	
 	// ==POTENTIAL ISSUE - This looks ridiculous. Oh god this looks ridiculous.
 	// std::list might help. Or some kind of operator overloading.
 
+	
+	//std::list<Block> blockList;
+
+
+	Block *blockArray[BLOCK_NUM];
 	blockArray[0] = new Block(8, 5);
 	blockArray[1] = new Block(9, 5);
 	blockArray[2] = new Block(9, 6); 
@@ -302,8 +309,8 @@ int main(void)
 
 
 			// 172 is 36 + 72 + 72, or 2 1/2 tiles to the right of the center of the player.
-			mapxoff = player1->getX() + player1->getWidth() / 2 - WIDTH + 172;
-			mapyoff = player1->getY() + player1->getHeight() / 2 - HEIGHT + 172;
+			mapxoff = player1->getX() + player1->getWidth() / 2 - WIDTH + 36 + 72 + 72;
+			mapyoff = player1->getY() + player1->getHeight() / 2 - HEIGHT + 36 + 72 + 72;
 
 			//Avoid moving beyond the map edge
 			if (mapxoff < 0) mapxoff = 0;
@@ -334,9 +341,7 @@ int main(void)
 
 			// ==POTENTIAL ISSUE -- debug code in comments instead of debug functions.
 
-			// This text can be uncommented if we need more info to debug movement.
-			//al_draw_textf(arial18, al_map_rgb(255, 255, 255), 500, 100, ALLEGRO_ALIGN_RIGHT, "Facing (%c) Movecounter (%i)", player1->getFacing(), player1->getCounter());
-			//al_draw_textf(arial18, al_map_rgb(255, 255, 255), 500, 200, ALLEGRO_ALIGN_RIGHT, "Coords (%i %i)", player1->getCX(), player1->getCY());
+			//debugPlayerMovement(arial18, player1);
 
 			//for (int q = 0; q < BLOCK_NUM; q++)
 				// This text can also be uncommented if we need more info to debug movement.
@@ -365,6 +370,11 @@ int main(void)
 	return 0;
 } // end main
 
+//void addBlockToList(int x, int y, std::list<Block> *blockList)
+//{
+//	blockList->push_back(new Block(x, y));
+//}
+
 // mappy collide test function
 int collided(int x, int y)
 {
@@ -388,3 +398,9 @@ bool blockCoordCollide(Block *blockf, Block *blockf2)
 	else
 		return false;
 } //END blockCoordCollide
+
+void debugPlayerMovement(ALLEGRO_FONT *arial18, Player *player1)
+{
+	al_draw_textf(arial18, al_map_rgb(255, 255, 255), 500, 100, ALLEGRO_ALIGN_RIGHT, "Facing (%c) Movecounter (%i)", player1->getFacing(), player1->getCounter());
+	al_draw_textf(arial18, al_map_rgb(255, 255, 255), 500, 200, ALLEGRO_ALIGN_RIGHT, "Coords (%i %i)", player1->getCX(), player1->getCY());
+}

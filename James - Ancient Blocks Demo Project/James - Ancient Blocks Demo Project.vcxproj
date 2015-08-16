@@ -91,7 +91,9 @@
     <ClCompile Include="Player_class.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BlockSetGenerator.h" />
     <ClInclude Include="Block_class.h" />
+    <ClInclude Include="Map.h" />
     <ClInclude Include="mappy_A5.h" />
     <ClInclude Include="playerdefs.h" />
     <ClInclude Include="Player_class.h" />

@@ -13,6 +13,7 @@ extern bool keys[];
 
 Block::Block(int cx_i, int cy_i)
 {
+	// Refactor out oldcx
 	coordx = oldcx = cx_i;
 	coordy = oldcx = cy_i;
 
